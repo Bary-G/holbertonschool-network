@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# configure an Ubuntu server
+INTERFACE="localhost"
+IP="127.0.0.2"
+MASK="24"
+GATEWAY="192.168.1.1"
+DNS="8.8.8.8,8.8.4.4"
+
+if [ "$EUID" -ne 0 ]; then
+  echo "Veuillez exécuter ce script en root."
+  exit 1
+fi
+
+cat > /etc/netplan/01-static-network.yaml <<EOF
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    $INTERFACE:
+      dhcp4: no
+      addresses:
+        - $IP/$MASK
+      gateway4: $GATEWAY
+      nameservers:
+        addresses: [$DNS]
+EOF
+
+netplan apply
+
+echo "Configuration réseau appliquée avec succès."
+echo "Interface : $INTERFACE"
+echo "Adresse IP : $IP/$MASK"
+echo "Passerelle : $GATEWAY"
+echo "DNS : $DNS"
