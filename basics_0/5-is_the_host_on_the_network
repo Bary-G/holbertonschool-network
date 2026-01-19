@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# pings an IP address
+if [[ "$1" =~ ^[A-Za-z0-9.-]+$ ]]; then
+    ping -c 5 "$1"
+fi
