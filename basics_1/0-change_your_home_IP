@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Configure an Ubuntu server with two IP addresses
+# Configure an Ubuntu server with an additional local IP and safe hosts modifications
 
 set -euo pipefail
 
@@ -7,14 +7,18 @@ backup_file="/etc/hosts.bak.$(date +%F-%H%M%S)"
 
 cp /etc/hosts "$backup_file"
 
-sed -i '/^127\.0\.0\.1[[:space:]]\+localhost/d' /etc/hosts
+echo "Backup created at $backup_file"
 
-printf "127.0.0.2\tlocalhost\n" >> /etc/hosts
-
-if ! grep -q "^127\.0\.0\.2" /etc/hosts; then
-    printf "127.0.0.2\tlocalhost2\n" >> /etc/hosts
+if ! grep -Eq '^127\.0\.0\.1[[:space:]]+localhost(\s|$)' /etc/hosts; then
+    printf "%s\n" "127.0.0.1   localhost" >> /etc/hosts
 fi
 
-printf "0.0.0.0\tfacebook.com\n" >> /etc/hosts
+if ! grep -Eq '^127\.0\.0\.2(\s|$)' /etc/hosts; then
+    printf "%s\n" "127.0.0.2   localhost2" >> /etc/hosts
+fi
 
-grep "localhost" /etc/hosts
+if ! grep -Eq '^0\.0\.0\.0[[:space:]]+facebook\.com(\s|$)' /etc/hosts; then
+    printf "%s\n" "0.0.0.0   facebook.com" >> /etc/hosts
+fi
+
+grep -E "localhost" /etc/hosts
