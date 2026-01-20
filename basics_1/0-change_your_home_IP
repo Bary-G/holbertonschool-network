@@ -9,12 +9,12 @@ cp /etc/hosts "$backup_file"
 
 sed -i '/^127\.0\.0\.1[[:space:]]\+localhost/d' /etc/hosts
 
-printf "127.0.0.1\tlocalhost\n" >> /etc/hosts
+printf "127.0.0.2\tlocalhost\n" >> /etc/hosts
 
 if ! grep -q "^127\.0\.0\.2" /etc/hosts; then
     printf "127.0.0.2\tlocalhost2\n" >> /etc/hosts
 fi
 
-printf "127.0.0.1\tfacebook.com\n" >> /etc/hosts
+printf "0.0.0.0\tfacebook.com\n" >> /etc/hosts
 
 grep "localhost" /etc/hosts
